@@ -1,0 +1,28 @@
+# Build artifacts
+/build
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+
+# Visual Studio
+*.vcxproj*
+*.sln
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Generated
+*.o
+*.obj
+*.exe
+*.out
+
+# Flutter/Dart (repo root may include other projects)
+.dart_tool/
+.packages
+.pub/
