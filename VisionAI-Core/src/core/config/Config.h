@@ -1,24 +1,13 @@
 #ifndef VISIONAI_CORE_CONFIG_H
 #define VISIONAI_CORE_CONFIG_H
 
-#include <string>
-
 namespace visionai {
 namespace core {
 
-class Config {
-public:
-    Config() noexcept;
+// Minimal config API stub. Expand later with real configuration handling.
 
-    bool isGPUEnabled() const noexcept;
-
-    // Future: load/save from file
-    bool loadFromFile(const std::string& path);
-    bool saveToFile(const std::string& path) const;
-
-private:
-    bool gpuEnabled_;
-};
+void initializeConfig();
+void shutdownConfig();
 
 } // namespace core
 } // namespace visionai
