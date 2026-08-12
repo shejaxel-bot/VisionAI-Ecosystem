@@ -1,10 +1,8 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(
-    VisionAICore
-    VERSION 0.0.1
-    LANGUAGES CXX
-)
+project(VisionAICore
+    VERSION 0.0.2
+    LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,6 +20,9 @@ add_library(
     src/image/PixelBuffer.cpp
     src/image/ImageAsset.cpp
     src/image/BrightnessOperation.cpp
+    src/image/EditGraph.cpp
+    src/image/ImageLoader.cpp
+    src/image/ImageWriter.cpp
 )
 
 # public include directories
