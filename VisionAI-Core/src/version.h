@@ -1,8 +1,8 @@
 #pragma once
 
-namespace visionai {
-inline namespace core {
+namespace visionai::core {
+
 inline constexpr char NAME[] = "VisionAI Core";
 inline constexpr char VERSION[] = "0.0.1";
-} // namespace core
-} // namespace visionai
+
+} // namespace visionai::core

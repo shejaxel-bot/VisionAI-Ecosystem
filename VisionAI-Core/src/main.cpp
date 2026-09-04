@@ -7,7 +7,11 @@ int main(int argc, char** argv)
 {
     (void)argc; (void)argv;
 
-    std::cout << visionai::NAME << " Version " << visionai::VERSION << std::endl;
+  std::cout
+    << visionai::core::NAME
+    << " Version "
+    << visionai::core::VERSION
+    << std::endl;
 
     visionai::core::Engine engine;
 
