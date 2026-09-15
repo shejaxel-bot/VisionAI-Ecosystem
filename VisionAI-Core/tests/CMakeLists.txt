@@ -20,3 +20,7 @@ add_test(NAME BrightnessOperationTests COMMAND BrightnessOperationTests)
 add_executable(EditGraphTests EditGraphTests.cpp)
 target_link_libraries(EditGraphTests PRIVATE visionai_core)
 add_test(NAME EditGraphTests COMMAND EditGraphTests)
+
+add_executable(ImageDecoderRegistryTests ImageDecoderRegistryTests.cpp)
+target_link_libraries(ImageDecoderRegistryTests PRIVATE visionai_core)
+add_test(NAME ImageDecoderRegistryTests COMMAND ImageDecoderRegistryTests)

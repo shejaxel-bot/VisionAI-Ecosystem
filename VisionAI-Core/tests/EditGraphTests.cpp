@@ -113,28 +113,30 @@ void testSingleBrightnessOperation()
 {
     PixelBuffer input(2, 2, PixelFormat::RGB8);
 
-    std::fill(
-        input.data(),
-        input.data() + input.byteSize(),
-        static_cast<std::uint8_t>(10)
-    );
+    for (std::size_t i = 0; i < input.byteSize(); ++i) {
+        input.data()[i] = 10;
+    }
 
     EditGraph graph;
 
     graph.addOperation(
-        std::make_shared<BrightnessOperation>(20.0f)
+        std::make_shared<BrightnessOperation>(0.20f)
     );
-
-    assert(graph.size() == 1);
 
     auto output = graph.render(input);
 
     assert(output != nullptr);
+    assert(output->width() == input.width());
+    assert(output->height() == input.height());
+    assert(output->format() == input.format());
 
+    // 10 / 255 + 0.20, converted back to RGB8,
+    // produces approximately 61.
     for (std::size_t i = 0; i < output->byteSize(); ++i) {
-        assert(output->data()[i] == 30);
+        assert(output->data()[i] == 61);
     }
 
+    // EditGraph must preserve the original input.
     for (std::size_t i = 0; i < input.byteSize(); ++i) {
         assert(input.data()[i] == 10);
     }

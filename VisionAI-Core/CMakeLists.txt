@@ -23,6 +23,7 @@ add_library(
     src/image/EditGraph.cpp
     src/image/ImageLoader.cpp
     src/image/ImageWriter.cpp
+    src/image/ImageDecoderRegistry.cpp
 )
 
 # public include directories

@@ -1,5 +1,6 @@
 #include "visionai/image/ImageAsset.h"
 
+#include <utility>
 namespace visionai::image {
 
 ImageAsset::ImageAsset(std::string id)
