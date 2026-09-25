@@ -24,3 +24,7 @@ add_test(NAME EditGraphTests COMMAND EditGraphTests)
 add_executable(ImageDecoderRegistryTests ImageDecoderRegistryTests.cpp)
 target_link_libraries(ImageDecoderRegistryTests PRIVATE visionai_core)
 add_test(NAME ImageDecoderRegistryTests COMMAND ImageDecoderRegistryTests)
+
+add_executable(ImageLoaderTests ImageLoaderTests.cpp)
+target_link_libraries(ImageLoaderTests PRIVATE visionai_core)
+add_test(NAME ImageLoaderTests COMMAND ImageLoaderTests)

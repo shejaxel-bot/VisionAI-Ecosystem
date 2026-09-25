@@ -1,13 +1,17 @@
 #include "visionai/image/ImageLoader.h"
 
 #include <filesystem>
+#include <utility>
 
-#include "visionai/image/ImageLoadResult.h"
 #include "visionai/image/ImageAsset.h"
+#include "visionai/image/ImageLoadResult.h"
 
 namespace visionai::image {
 
-ImageLoadResult ImageLoader::load(const std::string& path)
+ImageLoadResult ImageLoader::load(
+    const std::string& path,
+    const ImageDecoderRegistry& registry
+)
 {
     namespace fs = std::filesystem;
 
@@ -28,9 +32,28 @@ ImageLoadResult ImageLoader::load(const std::string& path)
             return result;
         }
 
-        // No decoder implemented yet. Return UnsupportedFormat until decoders are added.
-        result.error = ImageError::UnsupportedFormat;
-        result.message = "No decoder available in this build";
+        auto decoder = registry.findDecoder(path);
+
+        if (!decoder) {
+            result.error = ImageError::UnsupportedFormat;
+            result.message = "No decoder available for file";
+            return result;
+        }
+
+        auto pixelBuffer = decoder->decode(path);
+
+        if (!pixelBuffer) {
+            result.error = ImageError::DecodeFailed;
+            result.message = "Image decoder failed";
+            return result;
+        }
+
+        auto asset = std::make_shared<ImageAsset>(path);
+
+        asset->setPixelBuffer(std::move(pixelBuffer));
+
+        result.asset = std::move(asset);
+
         return result;
     }
     catch (const std::exception& e) {
