@@ -1,9 +1,8 @@
 #pragma once
 
-#include <memory>
 #include <string>
 
-#include "visionai/image/PixelBuffer.h"
+#include "visionai/image/ImageDecodeResult.h"
 
 namespace visionai::image {
 
@@ -13,7 +12,9 @@ public:
 
     virtual bool supports(const std::string& path) const = 0;
 
-    virtual std::shared_ptr<PixelBuffer> decode(const std::string& path) const = 0;
+    virtual ImageDecodeResult decode(
+        const std::string& path
+    ) const = 0;
 };
 
 } // namespace visionai::image

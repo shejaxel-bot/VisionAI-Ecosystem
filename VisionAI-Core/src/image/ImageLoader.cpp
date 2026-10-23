@@ -1,6 +1,8 @@
+
 #include "visionai/image/ImageLoader.h"
 
 #include <filesystem>
+#include <exception>
 #include <utility>
 
 #include "visionai/image/ImageAsset.h"
@@ -18,7 +20,7 @@ ImageLoadResult ImageLoader::load(
     ImageLoadResult result;
 
     try {
-        fs::path p(path);
+        const fs::path p(path);
 
         if (!fs::exists(p)) {
             result.error = ImageError::FileNotFound;
@@ -40,20 +42,24 @@ ImageLoadResult ImageLoader::load(
             return result;
         }
 
-        auto pixelBuffer = decoder->decode(path);
+        auto decoded = decoder->decode(path);
 
-        if (!pixelBuffer) {
-            result.error = ImageError::DecodeFailed;
-            result.message = "Image decoder failed";
+        if (!decoded.success()) {
+            result.error = decoded.error == ImageError::None
+                ? ImageError::DecodeFailed
+                : decoded.error;
+
+            result.message = decoded.message.empty()
+                ? "Image decoder failed"
+                : std::move(decoded.message);
+
             return result;
         }
 
         auto asset = std::make_shared<ImageAsset>(path);
-
-        asset->setPixelBuffer(std::move(pixelBuffer));
+        asset->setPixelBuffer(std::move(decoded.pixelBuffer));
 
         result.asset = std::move(asset);
-
         return result;
     }
     catch (const std::exception& e) {

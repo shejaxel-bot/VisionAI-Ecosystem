@@ -14,40 +14,43 @@ namespace {
 
 class TestDecoder final : public visionai::image::ImageDecoder {
 public:
-	explicit TestDecoder(std::string extension)
-		: extension_(std::move(extension))
-	{
-	}
+    explicit TestDecoder(std::string extension)
+        : extension_(std::move(extension))
+    {
+    }
 
-	bool supports(const std::string& path) const override
-	{
-		if (path.size() < extension_.size()) {
-			return false;
-		}
+    bool supports(const std::string& path) const override
+    {
+        if (path.size() < extension_.size()) {
+            return false;
+        }
 
-		return path.compare(path.size() - extension_.size(), extension_.size(),
-							extension_) == 0;
-	}
+        return path.compare(
+            path.size() - extension_.size(),
+            extension_.size(),
+            extension_
+        ) == 0;
+    }
 
-	std::shared_ptr<visionai::image::PixelBuffer>
-	decode(const std::string& /*path*/) const override
-	{
-		return std::make_shared<visionai::image::PixelBuffer>(
-			2, 2, visionai::image::PixelFormat::RGB8);
-	}
+    visionai::image::ImageDecodeResult
+    decode(const std::string& /*path*/) const override
+    {
+        visionai::image::ImageDecodeResult result;
+
+        result.pixelBuffer =
+            std::make_shared<visionai::image::PixelBuffer>(
+                2,
+                2,
+                visionai::image::PixelFormat::RGB8
+            );
+
+        return result;
+    }
 
 private:
-	std::string extension_;
+    std::string extension_;
 };
 
-std::filesystem::path createTestFile(const std::string& filename)
-{
-	const auto path = std::filesystem::temp_directory_path() / filename;
-	std::ofstream file(path);
-	assert(file.is_open());
-	file << "test image data";
-	return path;
-}
 class FailingDecoder final : public visionai::image::ImageDecoder {
 public:
     bool supports(const std::string& path) const override
@@ -56,12 +59,32 @@ public:
                path.compare(path.size() - 4, 4, ".png") == 0;
     }
 
-    std::shared_ptr<visionai::image::PixelBuffer>
+    visionai::image::ImageDecodeResult
     decode(const std::string& /*path*/) const override
     {
-        return nullptr;
+        visionai::image::ImageDecodeResult result;
+
+        result.error = visionai::image::ImageError::DecodeFailed;
+        result.message = "Test decoder failure";
+
+        return result;
     }
 };
+
+std::filesystem::path createTestFile(const std::string& filename)
+{
+    const auto path =
+        std::filesystem::temp_directory_path() / filename;
+
+    std::ofstream file(path);
+
+    assert(file.is_open());
+
+    file << "test image data";
+
+    return path;
+}
+
 void testMissingFile()
 {
     const auto path =
@@ -85,6 +108,7 @@ void testMissingFile()
         visionai::image::ImageError::FileNotFound
     );
 }
+
 void testNonRegularFile()
 {
     const auto directory =
@@ -95,8 +119,11 @@ void testNonRegularFile()
 
     visionai::image::ImageDecoderRegistry registry;
 
-const auto result =
-    visionai::image::ImageLoader::load(directory.string(),registry);
+    const auto result =
+        visionai::image::ImageLoader::load(
+            directory.string(),
+            registry
+        );
 
     assert(!result.success());
     assert(result.asset == nullptr);
@@ -113,9 +140,13 @@ void testExistingFileWithoutDecoder()
     const auto path =
         createTestFile("visionai_no_decoder_test.png");
 
-     visionai::image::ImageDecoderRegistry registry;   
+    visionai::image::ImageDecoderRegistry registry;
+
     const auto result =
-        visionai::image::ImageLoader::load(path.string(), registry);
+        visionai::image::ImageLoader::load(
+            path.string(),
+            registry
+        );
 
     assert(!result.success());
     assert(result.asset == nullptr);
@@ -126,7 +157,6 @@ void testExistingFileWithoutDecoder()
 
     std::filesystem::remove(path);
 }
-
 
 void testExistingFileWithDecoder()
 {
@@ -160,6 +190,7 @@ void testExistingFileWithDecoder()
 
     std::filesystem::remove(path);
 }
+
 void testDecoderFailure()
 {
     const auto path =
@@ -167,7 +198,8 @@ void testDecoderFailure()
 
     visionai::image::ImageDecoderRegistry registry;
 
-    auto decoder = std::make_shared<FailingDecoder>();
+    auto decoder =
+        std::make_shared<FailingDecoder>();
 
     registry.registerDecoder(decoder);
 
@@ -186,6 +218,7 @@ void testDecoderFailure()
 
     std::filesystem::remove(path);
 }
+
 } // namespace
 
 int main()

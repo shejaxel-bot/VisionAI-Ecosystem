@@ -29,14 +29,19 @@ public:
         ) == 0;
     }
 
-    std::shared_ptr<visionai::image::PixelBuffer>
+    visionai::image::ImageDecodeResult
     decode(const std::string& /*path*/) const override
     {
-        return std::make_shared<visionai::image::PixelBuffer>(
-            1,
-            1,
-            visionai::image::PixelFormat::RGB8
-        );
+        visionai::image::ImageDecodeResult result;
+
+        result.pixelBuffer =
+            std::make_shared<visionai::image::PixelBuffer>(
+                1,
+                1,
+                visionai::image::PixelFormat::RGB8
+            );
+
+        return result;
     }
 
 private:
